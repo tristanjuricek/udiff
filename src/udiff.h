@@ -23,7 +23,7 @@
 // * `timezone` is `'+'|'-'hhmm` where `hhmm` is hours and minutes east or west
 //   of GMT/UTC
 //
-// The git diff is nearly the same thing, but has additional header lines,
+// The git diff is nearly the udiff_same thing, but has additional header lines,
 // and does not give you the datetime. Review the help for git-diff for more
 // details.
 //
@@ -90,12 +90,12 @@ int udiff_chunk_to_length(udiff_handle udiff, int file_idx, int chunk_idx);
 int udiff_chunk_line_count(udiff_handle udiff, int file_idx, int chunk_idx);
 
 const char * udiff_chunk_line(udiff_handle handle, int file_idx, int chunk_idx,
-                              int lineno);
+                              int line_idx);
 
 enum udiff_line_type {
-    same,
-    add,
-    delete
+    udiff_same,
+    udiff_add,
+    udiff_delete
 };
 
 enum udiff_line_type udiff_chunk_line_type(udiff_handle handle, int file_idx,

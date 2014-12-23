@@ -22,8 +22,37 @@ START_TEST(parse_simple_change)
     ck_assert_int_eq(err, 0);
     ck_assert_ptr_ne(handle, NULL);
 
+    ck_assert_int_eq(udiff_file_count(handle), 1);
     ck_assert_str_eq(udiff_from_filename(handle, 0), "README");
     ck_assert_str_eq(udiff_to_filename(handle, 0), "READTHIS");
+
+    ck_assert_int_eq(udiff_chunk_count(handle, 0), 1);
+    ck_assert_int_eq(udiff_chunk_from_start(handle, 0, 0), 1);
+    ck_assert_int_eq(udiff_chunk_from_length(handle, 0, 0), 2);
+    ck_assert_int_eq(udiff_chunk_to_start(handle, 0, 0), 1);
+    ck_assert_int_eq(udiff_chunk_to_length(handle, 0, 0), 3);
+
+    ck_assert_int_eq(udiff_chunk_line_count(handle, 0, 0), 4);
+
+    const char *line = udiff_chunk_line(handle, 0, 0, 0);
+    enum udiff_line_type line_type = udiff_chunk_line_type(handle, 0, 0, 0);
+    ck_assert_str_eq(line, "This is a common line\n");
+    ck_assert_int_eq(line_type, udiff_same);
+
+    line = udiff_chunk_line(handle, 0, 0, 1);
+    line_type = udiff_chunk_line_type(handle, 0, 0, 1);
+    ck_assert_str_eq(line, "Line 1\n");
+    ck_assert_int_eq(line_type, udiff_delete);
+
+    line = udiff_chunk_line(handle, 0, 0, 2);
+    line_type = udiff_chunk_line_type(handle, 0, 0, 2);
+    ck_assert_str_eq(line, "Line 1 was boring\n");
+    ck_assert_int_eq(line_type, udiff_add);
+
+    line = udiff_chunk_line(handle, 0, 0, 3);
+    line_type = udiff_chunk_line_type(handle, 0, 0, 3);
+    ck_assert_str_eq(line, "Line 2 has more!\n");
+    ck_assert_int_eq(line_type, udiff_add);
 
     udiff_free(handle);
 }
@@ -92,11 +121,25 @@ START_TEST(single_git_style)
 
     ck_assert_int_eq(err, 0);
 
+    ck_assert_int_eq(udiff_file_count(handle), 1);
+
     const char *from_filename = udiff_from_filename(handle, 0);
     ck_assert_str_eq(from_filename, "yaggapp/src/main/java/com/tristanjuricek/yaggapp/component/InlineFileDiff.java");
 
     const char *to_filename = udiff_to_filename(handle, 0);
     ck_assert_str_eq(to_filename, "yaggapp/src/main/java/com/tristanjuricek/yaggapp/component/InlineFileDiff.java");
+
+    ck_assert_int_eq(udiff_chunk_count(handle, 0), 2);
+
+    ck_assert_int_eq(udiff_chunk_from_start(handle, 0, 0), 1);
+    ck_assert_int_eq(udiff_chunk_from_length(handle, 0, 0), 16);
+    ck_assert_int_eq(udiff_chunk_to_start(handle, 0, 0), 1);
+    ck_assert_int_eq(udiff_chunk_to_length(handle, 0, 0), 28);
+
+    ck_assert_int_eq(udiff_chunk_from_start(handle, 0, 1), 26);
+    ck_assert_int_eq(udiff_chunk_from_length(handle, 0, 1), 5);
+    ck_assert_int_eq(udiff_chunk_to_start(handle, 0, 1), 38);
+    ck_assert_int_eq(udiff_chunk_to_length(handle, 0, 1), 19);
 
     udiff_free(handle);
 }
