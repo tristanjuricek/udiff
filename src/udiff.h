@@ -93,9 +93,9 @@ const char * udiff_chunk_line(udiff_handle handle, int file_idx, int chunk_idx,
                               int line_idx);
 
 enum udiff_line_type {
-    udiff_same,
-    udiff_add,
-    udiff_delete
+    udiff_same = 1,
+    udiff_add = 2,
+    udiff_delete = 3
 };
 
 enum udiff_line_type udiff_chunk_line_type(udiff_handle handle, int file_idx,
